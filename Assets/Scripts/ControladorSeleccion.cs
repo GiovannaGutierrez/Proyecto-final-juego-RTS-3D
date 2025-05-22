@@ -32,6 +32,10 @@ public class Controlador_Interaccion : MonoBehaviour
 
     void Update()
     {
+        // ✅ Limpiar unidades y edificios destruidos
+        unidadesSeleccionadas.RemoveAll(u => u == null);
+        edificiosSeleccionados.RemoveAll(e => e == null);
+
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetKey(KeyCode.LeftShift))
@@ -75,6 +79,8 @@ public class Controlador_Interaccion : MonoBehaviour
                 {
                     foreach (GameObject unidad in unidadesSeleccionadas)
                     {
+                        if (unidad == null) continue;
+
                         UnidadJugador control = unidad.GetComponent<UnidadJugador>();
                         if (control != null)
                         {
@@ -97,6 +103,8 @@ public class Controlador_Interaccion : MonoBehaviour
 
                     for (int i = 0; i < cantidad; i++)
                     {
+                        if (unidadesSeleccionadas[i] == null) continue;
+
                         int fila = i / filas;
                         int columna = i % filas;
                         Vector3 offset = new Vector3((columna - filas / 2f) * separacion, 0, (fila - filas / 2f) * separacion);
@@ -166,11 +174,13 @@ public class Controlador_Interaccion : MonoBehaviour
     void DeseleccionarTodo()
     {
         foreach (GameObject unidad in unidadesSeleccionadas)
-            ActivarSelector(unidad, false);
+            if (unidad != null) ActivarSelector(unidad, false);
         unidadesSeleccionadas.Clear();
 
         foreach (GameObject edificio in edificiosSeleccionados)
         {
+            if (edificio == null) continue;
+
             Edificio e = edificio.GetComponent<Edificio>();
             if (e != null)
                 e.ActivarSelector(false);
@@ -180,6 +190,8 @@ public class Controlador_Interaccion : MonoBehaviour
 
     void ActivarSelector(GameObject objeto, bool activar)
     {
+        if (objeto == null) return;
+
         Transform selector = objeto.transform.Find("Selector");
         if (selector != null)
             selector.gameObject.SetActive(activar);
